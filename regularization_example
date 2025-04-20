@@ -1,0 +1,42 @@
+import numpy as np
+from sklearn.linear_model import Lasso, Ridge, LinearRegression
+import matplotlib.pyplot as plt
+
+# Generate sample data
+np.random.seed(42)
+X = np.random.randn(100, 20)  # 100 samples, 20 features
+true_weights = np.zeros(20)
+true_weights[:5] = [1, 0.5, -0.8, 0.3, -0.4]  # Only first 5 features are relevant
+y = X.dot(true_weights) + 0.1 * np.random.randn(100)
+
+# Train models with different regularization
+linear_reg = LinearRegression()
+ridge_reg = Ridge(alpha=1.0)  # L2 regularization
+lasso_reg = Lasso(alpha=1.0)  # L1 regularization
+
+# Fit models
+linear_reg.fit(X, y)
+ridge_reg.fit(X, y)
+lasso_reg.fit(X, y)
+
+# Plot coefficients
+plt.figure(figsize=(12, 6))
+features = range(20)
+
+plt.plot(features, linear_reg.coef_, 'o-', label='No regularization')
+plt.plot(features, ridge_reg.coef_, 's-', label='L2 (Ridge)')
+plt.plot(features, lasso_reg.coef_, '^-', label='L1 (Lasso)')
+plt.plot(features, true_weights, 'x-', label='True weights')
+
+plt.xlabel('Feature index')
+plt.ylabel('Coefficient value')
+plt.title('Effect of L1 and L2 Regularization on Model Coefficients')
+plt.legend()
+plt.grid(True)
+plt.show()
+
+# Print number of non-zero coefficients
+print("Number of non-zero coefficients:")
+print(f"No regularization: {np.sum(np.abs(linear_reg.coef_) > 1e-10)}")
+print(f"L2 (Ridge): {np.sum(np.abs(ridge_reg.coef_) > 1e-10)}")
+print(f"L1 (Lasso): {np.sum(np.abs(lasso_reg.coef_) > 1e-10)}") 
